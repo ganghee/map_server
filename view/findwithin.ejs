@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" id="viewport" content="width=device-width, height=device-height, initial-scale=1">
+    <title>구글 맵 1</title>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD1zXR_vuxwxXeNw9-TFus6kyUKtMfTkKA"></script>
+    <script>
+        
+        function onLoad(){
+            initMap();
+        }
+    
+        var map;
+        
+        //내 위치를 위한 좌표
+        var centerLocation = {lat: <%= paramLatitude %> , lng: <%= paramLongitude %>};
+        
+        //커피숍을 위한 좌표
+        var coffeeLocation = {lat: <%= result.geometry.coordinates[1] %>, lng: <%= result.geometry.coordinates[0] %>};
+        
+        //사각형 검색을 위한 좌표
+        var coords = new google.maps.LatLngBounds(
+            {lat:<%= paramTopLeftLatitude %>, lng:<%= paramTopLeftLongitude %>},
+            {lat:<%= paramBottomRightLatitude %>, lng:<%= paramBottomRightLongitude %>}
+        );
+        
+        function initMap(){
+            map = new google.maps.Map(document.getElementById('map'),{
+                center : centerLocation,
+                zoom : 17
+            });
+            
+            //내 위치 표시
+            var myMarker = new google.maps.Marker({
+                position:centerLocation,
+                icon:'/public/mylocation.png',
+                animation:google.maps.Animation.BOUNCE  //위 아래로 반복하여 움직임
+            });
+            
+            myMarker.setMap(map);
+            
+            var coffeeMarker = new google.maps.Marker({
+                position:coffeeLocation,
+                icon:'/public/coffee.png'
+            });
+            
+            coffeeMarker.setMap(map);
+            
+            var rectangle = new google.maps.Rectangle({
+                bounds:coords,
+                strokeOpacity:0.8,
+                strokeColor:'#0000ff',
+                strokeWeight:2,
+                fillColor:'#0000ff',
+                fillOpacity:0.4
+            });
+            
+            rectangle.setMap(map);
+        }
+    
+    </script>
+    
+    <style>
+    
+        *{
+            margin : 0;
+            padding : 0;
+        }
+        
+        html, body {
+            width: 100%;
+            height : 100%;
+        }
+        
+        #map {
+            width:100%;
+            height:95%;
+        }
+    
+    </style>
+    
+</head>
+<body onload="onLoad()">
+    <p>구글맵으로 내 위치 표시하기</p>
+    <div id='map'></div>
+</body>
+</html>
